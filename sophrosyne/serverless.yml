@@ -1,0 +1,42 @@
+# "org" ensures this Service is used with the correct Serverless Framework License Key.
+org: maarcotulio
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: sophrosyne
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: arm64
+
+package:
+  individually: true
+
+build:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    exclude:
+      - '@aws-sdk/*'
+
+functions:
+  createHabit:
+    handler: src/functions/createHabit.handler
+    events:
+      - httpApi:
+          path: /habits
+          method: post
+
+resources:
+  Resources:
+    HabitsTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: HABITS_TABLE
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
