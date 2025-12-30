@@ -7,6 +7,18 @@ provider:
   name: aws
   runtime: nodejs20.x
   architecture: arm64
+  environment:
+    HABITS_TABLE: !Ref HabitsTable
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource: !GetAtt HabitsTable.Arn
 
 package:
   individually: true
@@ -24,7 +36,7 @@ functions:
     handler: src/functions/createHabit.handler
     events:
       - httpApi:
-          path: /habits
+          path: /habits/{userId}
           method: post
 
 resources:
@@ -37,6 +49,10 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
