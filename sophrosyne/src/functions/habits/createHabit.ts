@@ -2,7 +2,7 @@ import type { APIGatewayProxyEventV2 } from "aws-lambda";
 import { response } from "../../utils/response.js";
 import zod from "zod";
 import { dynamoClient } from '../../clients/dynamoClients.js';
-import { PutCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 const schema = zod.object({
     habitName: zod.string(),
@@ -22,8 +22,17 @@ export async function handler(event: APIGatewayProxyEventV2) {
         return response(400, { error: error.message })
     }
 
-    // TODO: Verify if user exists
+    // Check if the user exists
+    const { Item: userExists } = await dynamoClient.send(new GetCommand({
+        TableName: process.env.USERS_TABLE,
+        Key: {
+            id: userId,
+        },
+    }));
 
+    if(!userExists) {
+        return response(404, { error: "User not found" })
+    }
 
     const { habitName, habitDescription } = data;
     const id = crypto.randomUUID();
