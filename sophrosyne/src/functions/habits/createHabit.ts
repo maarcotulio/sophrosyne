@@ -1,37 +1,41 @@
-import type { APIGatewayProxyEventV2 } from "aws-lambda";
-import { response } from "../../utils/response.js";
-import zod from "zod";
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { response } from '../../utils/response.js';
+import zod from 'zod';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 const schema = zod.object({
     habitName: zod.string(),
-    habitDescription: zod.string()
-})
+    habitDescription: zod.string(),
+});
 
 export async function handler(event: APIGatewayProxyEventV2) {
-    const { success, data, error} = schema.safeParse(JSON.parse(event.body ?? "{}"));
+    const { success, data, error } = schema.safeParse(
+        JSON.parse(event.body ?? '{}')
+    );
 
     const userId = event.pathParameters?.userId;
 
-    if(!userId) {
-        return response(400, { error: "User ID is required" })
+    if (!userId) {
+        return response(400, { error: 'User ID is required' });
     }
 
-    if(!success) {
-        return response(400, { error: error.message })
+    if (!success) {
+        return response(400, { error: error.message });
     }
 
     // Check if the user exists
-    const { Item: userExists } = await dynamoClient.send(new GetCommand({
-        TableName: process.env.USERS_TABLE,
-        Key: {
-            id: userId,
-        },
-    }));
+    const { Item: userExists } = await dynamoClient.send(
+        new GetCommand({
+            TableName: process.env.USERS_TABLE,
+            Key: {
+                id: userId,
+            },
+        })
+    );
 
-    if(!userExists) {
-        return response(404, { error: "User not found" })
+    if (!userExists) {
+        return response(404, { error: 'User not found' });
     }
 
     const { habitName, habitDescription } = data;
@@ -51,5 +55,5 @@ export async function handler(event: APIGatewayProxyEventV2) {
 
     await dynamoClient.send(command);
 
-    return response(201, { id })
+    return response(201, { id });
 }

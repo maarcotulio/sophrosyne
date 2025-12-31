@@ -1,6 +1,6 @@
-import type { APIGatewayProxyEventV2 } from "aws-lambda";
-import { response } from "../../utils/response.js";
-import zod from "zod";
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { response } from '../../utils/response.js';
+import zod from 'zod';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import bcrypt from 'bcryptjs';
@@ -10,13 +10,15 @@ const schema = zod.object({
     name: zod.string(),
     email: zod.email(),
     password: zod.string().min(6),
-})
+});
 
 export async function handler(event: APIGatewayProxyEventV2) {
-    const { success, data, error} = schema.safeParse(JSON.parse(event.body ?? "{}"));
+    const { success, data, error } = schema.safeParse(
+        JSON.parse(event.body ?? '{}')
+    );
 
-    if(!success) {
-        return response(400, { error: error.message })
+    if (!success) {
+        return response(400, { error: error.message });
     }
 
     const { avatar, name, email, password } = data;
@@ -39,5 +41,5 @@ export async function handler(event: APIGatewayProxyEventV2) {
 
     await dynamoClient.send(command);
 
-    return response(201, { id })
+    return response(201, { id });
 }

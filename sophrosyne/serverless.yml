@@ -45,6 +45,11 @@ functions:
       - httpApi:
           path: /users
           method: post
+    handler: src/functions/users/deleteUser.handler
+    events:
+      - httpApi:
+          path: /users/{userId}
+          method: delete
   createHabit:
     handler: src/functions/habits/createHabit.handler
     events:
