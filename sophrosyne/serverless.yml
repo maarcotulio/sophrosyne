@@ -4,84 +4,93 @@ org: maarcotulio
 service: sophrosyne
 
 provider:
-  name: aws
-  runtime: nodejs20.x
-  architecture: arm64
-  environment:
-    HABITS_TABLE: !Ref HabitsTable
-    USERS_TABLE: !Ref UsersTable
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - dynamodb:PutItem
-            - dynamodb:GetItem
-            - dynamodb:Query
-            - dynamodb:Scan
-          Resource: !GetAtt HabitsTable.Arn
-        - Effect: Allow
-          Action:
-            - dynamodb:PutItem
-            - dynamodb:GetItem
-            - dynamodb:Query
-            - dynamodb:Scan
-          Resource: !GetAtt UsersTable.Arn
+    name: aws
+    runtime: nodejs20.x
+    architecture: arm64
+    environment:
+        HABITS_TABLE: !Ref HabitsTable
+        USERS_TABLE: !Ref UsersTable
+    iam:
+        role:
+            statements:
+                - Effect: Allow
+                  Action:
+                      - dynamodb:PutItem
+                      - dynamodb:GetItem
+                      - dynamodb:Query
+                      - dynamodb:DeleteItem
+                      - dynamodb:Scan
+                  Resource: !GetAtt HabitsTable.Arn
+                - Effect: Allow
+                  Action:
+                      - dynamodb:PutItem
+                      - dynamodb:GetItem
+                      - dynamodb:DeleteItem
+                      - dynamodb:Query
+                      - dynamodb:Scan
+                  Resource: !GetAtt UsersTable.Arn
 package:
-  individually: true
+    individually: true
 
 build:
-  esbuild:
-    bundle: true
-    minify: true
-    sourcemap: true
-    exclude:
-      - '@aws-sdk/*'
+    esbuild:
+        bundle: true
+        minify: true
+        sourcemap: true
+        exclude:
+            - '@aws-sdk/*'
 
 functions:
-  createUser:
-    handler: src/functions/users/createUser.handler
-    events:
-      - httpApi:
-          path: /users
-          method: post
-    handler: src/functions/users/deleteUser.handler
-    events:
-      - httpApi:
-          path: /users/{userId}
-          method: delete
-  createHabit:
-    handler: src/functions/habits/createHabit.handler
-    events:
-      - httpApi:
-          path: /habits/{userId}
-          method: post
+    createUser:
+        handler: src/functions/users/createUser.handler
+        events:
+            - httpApi:
+                  path: /users
+                  method: POST
+    deleteUser:
+        handler: src/functions/users/deleteUser.handler
+        events:
+            - httpApi:
+                  path: /users/{userId}
+                  method: DELETE
+    createHabit:
+        handler: src/functions/habits/createHabit.handler
+        events:
+            - httpApi:
+                  path: /habits/{userId}
+                  method: POST
+    deleteHabit:
+        handler: src/functions/habits/deleteHabit.handler
+        events:
+            - httpApi:
+                  path: /habits/{userId}/{habitId}
+                  method: DELETE
 
 resources:
-  Resources:
-    UsersTable:
-      Type: "AWS::DynamoDB::Table"
-      Properties:
-        TableName: USERS_TABLE
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-    HabitsTable:
-      Type: "AWS::DynamoDB::Table"
-      Properties:
-        TableName: HABITS_TABLE
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: userId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-          - AttributeName: userId
-            KeyType: RANGE
+    Resources:
+        UsersTable:
+            Type: 'AWS::DynamoDB::Table'
+            Properties:
+                TableName: USERS_TABLE
+                BillingMode: PAY_PER_REQUEST
+                AttributeDefinitions:
+                    - AttributeName: id
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: id
+                      KeyType: HASH
+        HabitsTable:
+            Type: 'AWS::DynamoDB::Table'
+            Properties:
+                TableName: HABITS_TABLE
+                BillingMode: PAY_PER_REQUEST
+                AttributeDefinitions:
+                    - AttributeName: id
+                      AttributeType: S
+                    - AttributeName: userId
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: id
+                      KeyType: HASH
+                    - AttributeName: userId
+                      KeyType: RANGE
