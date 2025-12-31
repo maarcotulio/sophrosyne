@@ -9,6 +9,7 @@ provider:
   architecture: arm64
   environment:
     HABITS_TABLE: !Ref HabitsTable
+    USERS_TABLE: !Ref UsersTable
   iam:
     role:
       statements:
@@ -19,7 +20,13 @@ provider:
             - dynamodb:Query
             - dynamodb:Scan
           Resource: !GetAtt HabitsTable.Arn
-
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource: !GetAtt UsersTable.Arn
 package:
   individually: true
 
@@ -32,8 +39,14 @@ build:
       - '@aws-sdk/*'
 
 functions:
+  createUser:
+    handler: src/functions/users/createUser.handler
+    events:
+      - httpApi:
+          path: /users
+          method: post
   createHabit:
-    handler: src/functions/createHabit.handler
+    handler: src/functions/habits/createHabit.handler
     events:
       - httpApi:
           path: /habits/{userId}
@@ -41,6 +54,17 @@ functions:
 
 resources:
   Resources:
+    UsersTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: USERS_TABLE
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
     HabitsTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
