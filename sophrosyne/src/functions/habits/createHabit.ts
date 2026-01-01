@@ -1,16 +1,11 @@
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { response } from '../../utils/response.js';
-import zod from 'zod';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
-
-const schema = zod.object({
-    habitName: zod.string(),
-    habitDescription: zod.string(),
-});
+import { habitSchema } from '../../schemas/habitSchema.js';
 
 export async function handler(event: APIGatewayProxyEventV2) {
-    const { success, data, error } = schema.safeParse(
+    const { success, data, error } = habitSchema.safeParse(
         JSON.parse(event.body ?? '{}')
     );
 

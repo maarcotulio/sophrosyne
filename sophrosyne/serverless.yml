@@ -67,6 +67,12 @@ functions:
             - httpApi:
                   path: /habits/{userId}
                   method: POST
+    updateHabit:
+        handler: src/functions/habits/updateHabit.handler
+        events:
+            - httpApi:
+                  path: /habits/{userId}/{habitId}
+                  method: PUT
     deleteHabit:
         handler: src/functions/habits/deleteHabit.handler
         events:
