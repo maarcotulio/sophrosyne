@@ -8,7 +8,7 @@ provider:
     runtime: nodejs20.x
     architecture: arm64
     environment:
-        HABITS_TABLE: !Ref HabitsTable
+        SOPHROSYNE: !Ref SophrosyneTable
         USER_POOL_ID: !Ref CognitoUserPool
         USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
     httpApi:
@@ -30,7 +30,7 @@ provider:
                       - dynamodb:UpdateItem
                       - dynamodb:DeleteItem
                       - dynamodb:Scan
-                  Resource: !GetAtt HabitsTable.Arn
+                  Resource: !GetAtt SophrosyneTable.Arn
 package:
     individually: true
 
@@ -116,10 +116,10 @@ resources:
                     IdToken: hours
                     RefreshToken: days
 
-        HabitsTable:
+        SophrosyneTable:
             Type: 'AWS::DynamoDB::Table'
             Properties:
-                TableName: HABITS_TABLE
+                TableName: SOPHROSYNE
                 BillingMode: PAY_PER_REQUEST
                 AttributeDefinitions:
                     - AttributeName: PK

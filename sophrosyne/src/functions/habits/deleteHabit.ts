@@ -17,7 +17,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
 
     const { Item: habitExists } = await dynamoClient.send(
         new GetCommand({
-            TableName: process.env.HABITS_TABLE,
+            TableName: process.env.SOPHROSYNE,
             Key: {
                 PK: `USER#${userId}`,
                 SK: `HABIT#${habitId}`,
@@ -30,7 +30,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     }
 
     const command = new DeleteCommand({
-        TableName: process.env.HABITS_TABLE,
+        TableName: process.env.SOPHROSYNE,
         Key: {
             PK: `USER#${userId}`,
             SK: `HABIT#${habitId}`,

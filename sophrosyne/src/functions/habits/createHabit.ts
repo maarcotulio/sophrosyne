@@ -35,7 +35,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     };
 
     const command = new PutCommand({
-        TableName: process.env.HABITS_TABLE,
+        TableName: process.env.SOPHROSYNE,
         Item: habit,
     });
 

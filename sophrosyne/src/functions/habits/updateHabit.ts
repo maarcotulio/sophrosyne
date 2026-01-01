@@ -26,7 +26,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
 
     const { Item: habitExists } = await dynamoClient.send(
         new GetCommand({
-            TableName: process.env.HABITS_TABLE,
+            TableName: process.env.SOPHROSYNE,
             Key: {
                 PK: `USER#${userId}`,
                 SK: `HABIT#${habitId}`,
@@ -41,7 +41,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const { name, xpReward, frequency, category } = data;
 
     const command = new UpdateCommand({
-        TableName: process.env.HABITS_TABLE,
+        TableName: process.env.SOPHROSYNE,
         Key: {
             PK: `USER#${userId}`,
             SK: `HABIT#${habitId}`,
