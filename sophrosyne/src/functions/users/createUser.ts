@@ -25,7 +25,7 @@ export async function handler(event: APIGatewayProxyEventV2) {
     const id = crypto.randomUUID();
     const createdAt = new Date().toISOString();
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const command = new PutCommand({
         TableName: process.env.USERS_TABLE,

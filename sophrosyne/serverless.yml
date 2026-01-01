@@ -18,6 +18,7 @@ provider:
                       - dynamodb:PutItem
                       - dynamodb:GetItem
                       - dynamodb:Query
+                      - dynamodb:UpdateItem
                       - dynamodb:DeleteItem
                       - dynamodb:Scan
                   Resource: !GetAtt HabitsTable.Arn
@@ -26,6 +27,7 @@ provider:
                       - dynamodb:PutItem
                       - dynamodb:GetItem
                       - dynamodb:DeleteItem
+                      - dynamodb:UpdateItem
                       - dynamodb:Query
                       - dynamodb:Scan
                   Resource: !GetAtt UsersTable.Arn
@@ -47,6 +49,12 @@ functions:
             - httpApi:
                   path: /users
                   method: POST
+    updateUser:
+        handler: src/functions/users/updateUser.handler
+        events:
+            - httpApi:
+                  path: /users/{userId}
+                  method: PUT
     deleteUser:
         handler: src/functions/users/deleteUser.handler
         events:
