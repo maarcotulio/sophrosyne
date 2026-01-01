@@ -43,6 +43,14 @@ build:
             - '@aws-sdk/*'
 
 functions:
+    listHabit:
+        handler: src/functions/habits/listHabit.handler
+        events:
+            - httpApi:
+                  path: /habits
+                  method: GET
+                  authorizer:
+                      name: cognitoAuthorizer
     createHabit:
         handler: src/functions/habits/createHabit.handler
         events:
