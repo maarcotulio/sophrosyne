@@ -51,8 +51,6 @@ functions:
                   method: POST
                   authorizer:
                       name: cognitoAuthorizer
-                      type: jwt
-                      identitySource: $request.header.Authorization
     updateHabit:
         handler: src/functions/habits/updateHabit.handler
         events:
@@ -61,8 +59,6 @@ functions:
                   method: PUT
                   authorizer:
                       name: cognitoAuthorizer
-                      type: jwt
-                      identitySource: $request.header.Authorization
     deleteHabit:
         handler: src/functions/habits/deleteHabit.handler
         events:
@@ -71,8 +67,6 @@ functions:
                   method: DELETE
                   authorizer:
                       name: cognitoAuthorizer
-                      type: jwt
-                      identitySource: $request.header.Authorization
 
 resources:
     Resources:
