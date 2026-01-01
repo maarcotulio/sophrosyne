@@ -1,13 +1,13 @@
-import type { APIGatewayProxyEvent } from 'aws-lambda';
+import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 import { response } from '../../utils/response.js';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { DeleteCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 
-export async function handler(event: APIGatewayProxyEvent) {
-    const id = event.requestContext.authorizer?.claims.sub;
+export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
+    const userId = event.requestContext.authorizer.jwt.claims.sub as string;
     const habitId = event.pathParameters?.habitId;
 
-    if (!id) {
+    if (!userId) {
         return response(400, { error: 'User ID is required' });
     }
 
@@ -19,7 +19,7 @@ export async function handler(event: APIGatewayProxyEvent) {
         new GetCommand({
             TableName: process.env.HABITS_TABLE,
             Key: {
-                PK: `USER#${id}`,
+                PK: `USER#${userId}`,
                 SK: `HABIT#${habitId}`,
             },
         })
@@ -32,7 +32,7 @@ export async function handler(event: APIGatewayProxyEvent) {
     const command = new DeleteCommand({
         TableName: process.env.HABITS_TABLE,
         Key: {
-            PK: `USER#${id}`,
+            PK: `USER#${userId}`,
             SK: `HABIT#${habitId}`,
         },
     });

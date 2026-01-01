@@ -1,15 +1,15 @@
-import type { APIGatewayProxyEvent } from 'aws-lambda';
+import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 import { response } from '../../utils/response.js';
 import { habitSchema } from '../../schemas/habitSchema.js';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
-export async function handler(event: APIGatewayProxyEvent) {
+export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const { success, data, error } = habitSchema.safeParse(
         JSON.parse(event.body ?? '{}')
     );
 
-    const userId = event.requestContext.authorizer?.claims.sub;
+    const userId = event.requestContext.authorizer.jwt.claims.sub as string;
     const habitId = event.pathParameters?.habitId;
 
     if (!userId) {
