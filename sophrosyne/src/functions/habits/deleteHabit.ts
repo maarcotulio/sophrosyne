@@ -1,10 +1,10 @@
-import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import type { APIGatewayProxyEvent } from 'aws-lambda';
 import { response } from '../../utils/response.js';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { DeleteCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 
-export async function handler(event: APIGatewayProxyEventV2) {
-    const id = event.pathParameters?.userId;
+export async function handler(event: APIGatewayProxyEvent) {
+    const id = event.requestContext.authorizer?.claims.sub;
     const habitId = event.pathParameters?.habitId;
 
     if (!id) {
@@ -19,8 +19,8 @@ export async function handler(event: APIGatewayProxyEventV2) {
         new GetCommand({
             TableName: process.env.HABITS_TABLE,
             Key: {
-                id: habitId,
-                userId: id,
+                PK: `USER#${id}`,
+                SK: `HABIT#${habitId}`,
             },
         })
     );
@@ -29,17 +29,11 @@ export async function handler(event: APIGatewayProxyEventV2) {
         return response(404, { error: 'Habit not found' });
     }
 
-    if (habitExists.userId !== id) {
-        return response(403, {
-            error: 'You are not authorized to delete this habit',
-        });
-    }
-
     const command = new DeleteCommand({
         TableName: process.env.HABITS_TABLE,
         Key: {
-            id: habitId,
-            userId: id,
+            PK: `USER#${id}`,
+            SK: `HABIT#${habitId}`,
         },
     });
 

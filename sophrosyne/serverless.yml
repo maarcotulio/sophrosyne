@@ -9,7 +9,16 @@ provider:
     architecture: arm64
     environment:
         HABITS_TABLE: !Ref HabitsTable
-        USERS_TABLE: !Ref UsersTable
+        USER_POOL_ID: !Ref CognitoUserPool
+        USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
+    httpApi:
+        authorizers:
+            cognitoAuthorizer:
+                type: jwt
+                identitySource: $request.header.Authorization
+                issuerUrl: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}'
+                audience:
+                    - !Ref CognitoUserPoolClient
     iam:
         role:
             statements:
@@ -22,15 +31,6 @@ provider:
                       - dynamodb:DeleteItem
                       - dynamodb:Scan
                   Resource: !GetAtt HabitsTable.Arn
-                - Effect: Allow
-                  Action:
-                      - dynamodb:PutItem
-                      - dynamodb:GetItem
-                      - dynamodb:DeleteItem
-                      - dynamodb:UpdateItem
-                      - dynamodb:Query
-                      - dynamodb:Scan
-                  Resource: !GetAtt UsersTable.Arn
 package:
     individually: true
 
@@ -43,68 +43,108 @@ build:
             - '@aws-sdk/*'
 
 functions:
-    createUser:
-        handler: src/functions/users/createUser.handler
-        events:
-            - httpApi:
-                  path: /users
-                  method: POST
-    updateUser:
-        handler: src/functions/users/updateUser.handler
-        events:
-            - httpApi:
-                  path: /users/{userId}
-                  method: PUT
-    deleteUser:
-        handler: src/functions/users/deleteUser.handler
-        events:
-            - httpApi:
-                  path: /users/{userId}
-                  method: DELETE
     createHabit:
         handler: src/functions/habits/createHabit.handler
         events:
             - httpApi:
-                  path: /habits/{userId}
+                  path: /habits
                   method: POST
+                  authorizer:
+                      name: cognitoAuthorizer
+                      type: jwt
+                      identitySource: $request.header.Authorization
     updateHabit:
         handler: src/functions/habits/updateHabit.handler
         events:
             - httpApi:
-                  path: /habits/{userId}/{habitId}
+                  path: /habits/{habitId}
                   method: PUT
+                  authorizer:
+                      name: cognitoAuthorizer
+                      type: jwt
+                      identitySource: $request.header.Authorization
     deleteHabit:
         handler: src/functions/habits/deleteHabit.handler
         events:
             - httpApi:
-                  path: /habits/{userId}/{habitId}
+                  path: /habits/{habitId}
                   method: DELETE
+                  authorizer:
+                      name: cognitoAuthorizer
+                      type: jwt
+                      identitySource: $request.header.Authorization
 
 resources:
     Resources:
-        UsersTable:
-            Type: 'AWS::DynamoDB::Table'
+        CognitoUserPool:
+            Type: AWS::Cognito::UserPool
             Properties:
-                TableName: USERS_TABLE
-                BillingMode: PAY_PER_REQUEST
-                AttributeDefinitions:
-                    - AttributeName: id
-                      AttributeType: S
-                KeySchema:
-                    - AttributeName: id
-                      KeyType: HASH
+                UserPoolName: ${self:service}-user-pool
+                AutoVerifiedAttributes:
+                    - email
+                UsernameAttributes:
+                    - email
+                Schema:
+                    - Name: email
+                      Required: true
+                      Mutable: true
+                    - Name: name
+                      Required: false
+                      Mutable: true
+                Policies:
+                    PasswordPolicy:
+                        MinimumLength: 8
+                        RequireLowercase: true
+                        RequireUppercase: true
+                        RequireNumbers: true
+                        RequireSymbols: false
+                AccountRecoverySetting:
+                    RecoveryMechanisms:
+                        - Name: verified_email
+                          Priority: 1
+
+        CognitoUserPoolClient:
+            Type: AWS::Cognito::UserPoolClient
+            Properties:
+                ClientName: ${self:service}-client
+                UserPoolId: !Ref CognitoUserPool
+                GenerateSecret: false
+                ExplicitAuthFlows:
+                    - ALLOW_USER_PASSWORD_AUTH
+                    - ALLOW_REFRESH_TOKEN_AUTH
+                    - ALLOW_USER_SRP_AUTH
+                PreventUserExistenceErrors: ENABLED
+                AccessTokenValidity: 1
+                IdTokenValidity: 1
+                RefreshTokenValidity: 30
+                TokenValidityUnits:
+                    AccessToken: hours
+                    IdToken: hours
+                    RefreshToken: days
+
         HabitsTable:
             Type: 'AWS::DynamoDB::Table'
             Properties:
                 TableName: HABITS_TABLE
                 BillingMode: PAY_PER_REQUEST
                 AttributeDefinitions:
-                    - AttributeName: id
+                    - AttributeName: PK
                       AttributeType: S
-                    - AttributeName: userId
+                    - AttributeName: SK
                       AttributeType: S
                 KeySchema:
-                    - AttributeName: id
+                    - AttributeName: PK
                       KeyType: HASH
-                    - AttributeName: userId
+                    - AttributeName: SK
                       KeyType: RANGE
+
+    Outputs:
+        UserPoolId:
+            Value: !Ref CognitoUserPool
+            Description: ID of the Cognito User Pool
+        UserPoolClientId:
+            Value: !Ref CognitoUserPoolClient
+            Description: ID of the Cognito User Pool Client
+        UserPoolArn:
+            Value: !GetAtt CognitoUserPool.Arn
+            Description: ARN of the Cognito User Pool

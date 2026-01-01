@@ -1,15 +1,15 @@
-import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import type { APIGatewayProxyEvent } from 'aws-lambda';
 import { response } from '../../utils/response.js';
 import { habitSchema } from '../../schemas/habitSchema.js';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
-export async function handler(event: APIGatewayProxyEventV2) {
+export async function handler(event: APIGatewayProxyEvent) {
     const { success, data, error } = habitSchema.safeParse(
         JSON.parse(event.body ?? '{}')
     );
 
-    const userId = event.pathParameters?.userId;
+    const userId = event.requestContext.authorizer?.claims.sub;
     const habitId = event.pathParameters?.habitId;
 
     if (!userId) {
@@ -28,8 +28,8 @@ export async function handler(event: APIGatewayProxyEventV2) {
         new GetCommand({
             TableName: process.env.HABITS_TABLE,
             Key: {
-                id: habitId,
-                userId: userId,
+                PK: `USER#${userId}`,
+                SK: `HABIT#${habitId}`,
             },
         })
     );
@@ -38,29 +38,27 @@ export async function handler(event: APIGatewayProxyEventV2) {
         return response(404, { error: 'Habit not found' });
     }
 
-    if (habitExists.userId !== userId) {
-        return response(403, {
-            error: 'You are not authorized to update this habit',
-        });
-    }
-
-    const { habitName, habitDescription } = data;
+    const { name, xpReward, frequency, category } = data;
 
     const command = new UpdateCommand({
         TableName: process.env.HABITS_TABLE,
         Key: {
-            id: habitId,
-            userId: userId,
+            PK: `USER#${userId}`,
+            SK: `HABIT#${habitId}`,
         },
         UpdateExpression:
-            'set #habitName = :habitName, #habitDescription = :habitDescription',
+            'set #name = :name, #xpReward = :xpReward, #frequency = :frequency, #category = :category',
         ExpressionAttributeValues: {
-            ':habitName': habitName,
-            ':habitDescription': habitDescription,
+            ':name': name,
+            ':xpReward': xpReward,
+            ':frequency': frequency,
+            ':category': category,
         },
         ExpressionAttributeNames: {
-            '#habitName': 'habitName',
-            '#habitDescription': 'habitDescription',
+            '#name': 'name',
+            '#xpReward': 'xpReward',
+            '#frequency': 'frequency',
+            '#category': 'category',
         },
     });
 

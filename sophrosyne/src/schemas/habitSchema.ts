@@ -1,6 +1,8 @@
 import zod from 'zod';
 
 export const habitSchema = zod.object({
-    habitName: zod.string(),
-    habitDescription: zod.string(),
+    name: zod.string(),
+    xpReward: zod.number(),
+    frequency: zod.string(),
+    category: zod.string(),
 });

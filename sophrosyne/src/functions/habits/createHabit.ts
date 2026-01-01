@@ -1,54 +1,45 @@
-import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import type { APIGatewayProxyEvent } from 'aws-lambda';
 import { response } from '../../utils/response.js';
 import { dynamoClient } from '../../clients/dynamoClients.js';
-import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { habitSchema } from '../../schemas/habitSchema.js';
 
-export async function handler(event: APIGatewayProxyEventV2) {
+export async function handler(event: APIGatewayProxyEvent) {
     const { success, data, error } = habitSchema.safeParse(
         JSON.parse(event.body ?? '{}')
     );
 
-    const userId = event.pathParameters?.userId;
+    const userId = event.requestContext.authorizer?.claims.sub;
 
     if (!userId) {
-        return response(400, { error: 'User ID is required' });
+        return response(401, { error: 'Unauthorized' });
     }
 
     if (!success) {
         return response(400, { error: error.message });
     }
 
-    // Check if the user exists
-    const { Item: userExists } = await dynamoClient.send(
-        new GetCommand({
-            TableName: process.env.USERS_TABLE,
-            Key: {
-                id: userId,
-            },
-        })
-    );
+    const { name, xpReward, frequency, category } = data;
 
-    if (!userExists) {
-        return response(404, { error: 'User not found' });
-    }
-
-    const { habitName, habitDescription } = data;
-    const id = crypto.randomUUID();
-    const createdAt = new Date().toISOString();
+    const habitId = crypto.randomUUID();
+    const habit = {
+        PK: `USER#${userId}`,
+        SK: `HABIT#${habitId}`,
+        id: habitId,
+        name,
+        xpReward,
+        frequency,
+        category,
+        completedCount: 0,
+        createdAt: new Date().toISOString(),
+    };
 
     const command = new PutCommand({
         TableName: process.env.HABITS_TABLE,
-        Item: {
-            id,
-            userId,
-            habitName,
-            habitDescription,
-            createdAt,
-        },
+        Item: habit,
     });
 
     await dynamoClient.send(command);
 
-    return response(201, { id });
+    return response(201, { id: habit.id });
 }
