@@ -24,7 +24,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
         return response(400, { error: error.message });
     }
 
-    const { name, xpReward, frequency, category } = data;
+    const { name, xpReward, category } = data;
 
     const habitId = crypto.randomUUID();
     const habit = {
@@ -33,10 +33,10 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
         id: habitId,
         name,
         xpReward,
-        frequency,
         category,
         completedCount: 0,
         createdAt: new Date().toISOString(),
+        nextCompletionDate: new Date().toISOString(),
     };
 
     const command = new PutCommand({

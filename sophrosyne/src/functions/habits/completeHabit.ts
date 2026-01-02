@@ -1,6 +1,6 @@
 import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 import { awardXp } from '../../utils/awardXp.js';
-import { GetCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 
 export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
@@ -31,8 +31,60 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
         };
     }
 
+    const { Item: profile } = await dynamoClient.send(
+        new GetCommand({
+            TableName: process.env.SOPHROSYNE,
+            Key: {
+                PK: `USER#${userId}`,
+                SK: 'PROFILE',
+            },
+        })
+    );
+
+    if (!profile) {
+        return {
+            statusCode: 404,
+            body: JSON.stringify({ error: 'Profile not found' }),
+        };
+    }
+
+    if (habit.nextCompletionDate > new Date().toISOString()) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                error: 'You cannot complete this habit yet',
+            }),
+        };
+    }
+
     // Award XP
-    const message = await awardXp(userId, habit.xpReward);
+    const message = await awardXp({ profile, xpReward: habit.xpReward });
+
+    habit.completedCount += 1;
+    const nextDay = new Date();
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(0, 0, 0, 0);
+    habit.nextCompletionDate = nextDay.toISOString();
+
+    const command = new UpdateCommand({
+        TableName: process.env.SOPHROSYNE,
+        Key: {
+            PK: `USER#${userId}`,
+            SK: `HABIT#${habitId}`,
+        },
+        UpdateExpression:
+            'set #completedCount = :completedCount, #nextCompletionDate = :nextCompletionDate',
+        ExpressionAttributeValues: {
+            ':completedCount': habit.completedCount,
+            ':nextCompletionDate': habit.nextCompletionDate,
+        },
+        ExpressionAttributeNames: {
+            '#completedCount': 'completedCount',
+            '#nextCompletionDate': 'nextCompletionDate',
+        },
+    });
+
+    await dynamoClient.send(command);
 
     return {
         statusCode: 200,
