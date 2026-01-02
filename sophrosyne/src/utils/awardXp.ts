@@ -42,4 +42,8 @@ export async function awardXp(userId: string, xpReward: number) {
             },
         })
     );
+
+    return profile.level === newLevel
+        ? 'You have reached a new level!'
+        : 'XP awarded successfully!';
 }

@@ -32,10 +32,10 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     }
 
     // Award XP
-    await awardXp(userId, habit.xpReward);
+    const message = await awardXp(userId, habit.xpReward);
 
     return {
         statusCode: 200,
-        body: JSON.stringify({ message: 'Habit completed successfully' }),
+        body: JSON.stringify({ message }),
     };
 }
