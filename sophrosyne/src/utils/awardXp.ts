@@ -1,5 +1,6 @@
 import { dynamoClient } from '../clients/dynamoClients.js';
 import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { calculateLevelUp } from '../shared/game/levelingSystem.js';
 
 export async function awardXp(userId: string, xpReward: number) {
     const { Item: profile } = await dynamoClient.send(
@@ -16,9 +17,11 @@ export async function awardXp(userId: string, xpReward: number) {
         return;
     }
 
-    const { xp } = profile;
-
-    const updatedXp = xp + xpReward;
+    const { newLevel, newXP } = calculateLevelUp(
+        profile.level,
+        profile.xp,
+        xpReward
+    );
 
     // Update profile
     await dynamoClient.send(
@@ -28,12 +31,14 @@ export async function awardXp(userId: string, xpReward: number) {
                 PK: `USER#${userId}`,
                 SK: 'PROFILE',
             },
-            UpdateExpression: 'set #xp = :xp',
+            UpdateExpression: 'set #xp = :xp, #level = :level',
             ExpressionAttributeValues: {
-                ':xp': updatedXp,
+                ':xp': newXP,
+                ':level': newLevel,
             },
             ExpressionAttributeNames: {
                 '#xp': 'xp',
+                '#level': 'level',
             },
         })
     );
