@@ -75,8 +75,6 @@ functions:
                   method: DELETE
                   authorizer:
                       name: cognitoAuthorizer
-    postConfirmation:
-        handler: src/functions/auth/postConfirmation.handler
 
 resources:
     Resources:
