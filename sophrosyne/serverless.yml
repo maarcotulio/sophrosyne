@@ -75,6 +75,14 @@ functions:
                   method: DELETE
                   authorizer:
                       name: cognitoAuthorizer
+    completeHabit:
+        handler: src/functions/habits/completeHabit.handler
+        events:
+            - httpApi:
+                  path: /habits/{habitId}/complete
+                  method: POST
+                  authorizer:
+                      name: cognitoAuthorizer
 
 resources:
     Resources:
@@ -139,8 +147,6 @@ resources:
                       KeyType: HASH
                     - AttributeName: SK
                       KeyType: RANGE
-                StreamSpecification:
-                    StreamViewType: NEW_AND_OLD_IMAGES
 
     Outputs:
         UserPoolId:
