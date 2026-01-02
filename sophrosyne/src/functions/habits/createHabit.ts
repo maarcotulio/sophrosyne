@@ -3,6 +3,7 @@ import { response } from '../../utils/response.js';
 import { dynamoClient } from '../../clients/dynamoClients.js';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { habitSchema } from '../../schemas/habitSchema.js';
+import { ensureProfile } from '../../utils/ensureProfile.js';
 
 export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const { success, data, error } = habitSchema.safeParse(
@@ -10,10 +11,14 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     );
 
     const userId = event.requestContext.authorizer.jwt.claims.sub as string;
+    const email = event.requestContext.authorizer.jwt.claims.email as string;
 
     if (!userId) {
         return response(401, { error: 'Unauthorized' });
     }
+
+    // Ensure user profile exists
+    await ensureProfile(userId, email);
 
     if (!success) {
         return response(400, { error: error.message });
