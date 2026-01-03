@@ -7,8 +7,12 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const userId = event.requestContext.authorizer.jwt.claims.sub as string;
     const goalId = event.pathParameters?.goalId as string;
 
-    if (!userId || !goalId) {
-        return response(400, { error: 'Missing required parameters' });
+    if (!userId) {
+        return response(401, { error: 'Unauthorized' });
+    }
+
+    if (!goalId) {
+        return response(400, { error: 'Goal ID is required' });
     }
 
     const command = new DeleteCommand({
