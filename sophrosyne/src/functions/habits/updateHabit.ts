@@ -43,7 +43,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
         return response(404, { error: 'Habit not found' });
     }
 
-    const { name, xpReward, frequency, category } = data;
+    const { name, xpReward, category } = data;
 
     const command = new UpdateCommand({
         TableName: process.env.SOPHROSYNE,
@@ -52,17 +52,15 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
             SK: `HABIT#${habitId}`,
         },
         UpdateExpression:
-            'set #name = :name, #xpReward = :xpReward, #frequency = :frequency, #category = :category',
+            'set #name = :name, #xpReward = :xpReward, #category = :category',
         ExpressionAttributeValues: {
             ':name': name,
             ':xpReward': xpReward,
-            ':frequency': frequency,
             ':category': category,
         },
         ExpressionAttributeNames: {
             '#name': 'name',
             '#xpReward': 'xpReward',
-            '#frequency': 'frequency',
             '#category': 'category',
         },
     });
