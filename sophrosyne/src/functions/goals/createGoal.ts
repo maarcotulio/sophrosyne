@@ -11,6 +11,10 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
 
     const userId = event.requestContext.authorizer.jwt.claims.sub as string;
 
+    if (!userId) {
+        return response(401, { error: 'Unauthorized' });
+    }
+
     if (!success) {
         return response(400, { error: error.message });
     }
