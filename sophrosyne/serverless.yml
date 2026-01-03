@@ -83,6 +83,38 @@ functions:
                   method: POST
                   authorizer:
                       name: cognitoAuthorizer
+    listGoal:
+        handler: src/functions/goals/listGoal.handler
+        events:
+            - httpApi:
+                  path: /goals
+                  method: GET
+                  authorizer:
+                      name: cognitoAuthorizer
+    createGoal:
+        handler: src/functions/goals/createGoal.handler
+        events:
+            - httpApi:
+                  path: /goals
+                  method: POST
+                  authorizer:
+                      name: cognitoAuthorizer
+    updateGoal:
+        handler: src/functions/goals/updateGoal.handler
+        events:
+            - httpApi:
+                  path: /goals/{goalId}
+                  method: PUT
+                  authorizer:
+                      name: cognitoAuthorizer
+    deleteGoal:
+        handler: src/functions/goals/deleteGoal.handler
+        events:
+            - httpApi:
+                  path: /goals/{goalId}
+                  method: DELETE
+                  authorizer:
+                      name: cognitoAuthorizer
 
 resources:
     Resources:
