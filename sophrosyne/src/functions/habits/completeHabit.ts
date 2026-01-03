@@ -2,16 +2,18 @@ import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 import { awardXp } from '../../utils/awardXp.js';
 import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { dynamoClient } from '../../clients/dynamoClients.js';
+import { response } from '../../utils/response.js';
 
 export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const userId = event.requestContext.authorizer.jwt.claims.sub as string;
     const habitId = event.pathParameters?.habitId as string;
 
-    if (!userId || !habitId) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Missing required parameters' }),
-        };
+    if (!userId) {
+        return response(401, { error: 'Unauthorized' });
+    }
+
+    if (!habitId) {
+        return response(400, { error: 'Habit ID is required' });
     }
 
     const { Item: habit } = await dynamoClient.send(
