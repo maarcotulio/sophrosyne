@@ -15,7 +15,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const habitId = event.pathParameters?.habitId;
 
     if (!userId) {
-        return response(400, { error: 'User ID is required' });
+        return response(401, { error: 'Unauthorized' });
     }
 
     if (!habitId) {
