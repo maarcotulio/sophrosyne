@@ -1,0 +1,25 @@
+import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
+import { response } from '../../utils/response.js';
+import { DeleteCommand } from '@aws-sdk/lib-dynamodb';
+import { dynamoClient } from '../../clients/dynamoClients.js';
+
+export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
+    const userId = event.requestContext.authorizer.jwt.claims.sub as string;
+    const goalId = event.pathParameters?.goalId as string;
+
+    if (!userId || !goalId) {
+        return response(400, { error: 'Missing required parameters' });
+    }
+
+    const command = new DeleteCommand({
+        TableName: process.env.SOPHROSYNE,
+        Key: {
+            PK: `USER#${userId}`,
+            SK: `GOAL#${goalId}`,
+        },
+    });
+
+    await dynamoClient.send(command);
+
+    return response(204);
+}
