@@ -6,6 +6,10 @@ import { dynamoClient } from '../../clients/dynamoClients.js';
 export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const userId = event.requestContext.authorizer.jwt.claims.sub as string;
 
+    if (!userId) {
+        return response(401, { error: 'Unauthorized' });
+    }
+
     const command = new ScanCommand({
         TableName: process.env.SOPHROSYNE,
         FilterExpression: 'PK = :userId AND begins_with(SK, :sk)',
