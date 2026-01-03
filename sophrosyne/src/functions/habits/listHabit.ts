@@ -9,7 +9,7 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
     const email = event.requestContext.authorizer.jwt.claims.email as string;
 
     if (!userId) {
-        return response(400, { error: 'User ID is required' });
+        return response(401, { error: 'Unauthorized' });
     }
 
     // Ensure user profile exists
