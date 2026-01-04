@@ -115,6 +115,38 @@ functions:
                   method: DELETE
                   authorizer:
                       name: cognitoAuthorizer
+    createSleep:
+        handler: src/functions/sleep/createSleep.handler
+        events:
+            - httpApi:
+                  path: /sleep
+                  method: POST
+                  authorizer:
+                      name: cognitoAuthorizer
+    updateSleep:
+        handler: src/functions/sleep/updateSleep.handler
+        events:
+            - httpApi:
+                  path: /sleep/{date}
+                  method: PUT
+                  authorizer:
+                      name: cognitoAuthorizer
+    listSleep:
+        handler: src/functions/sleep/listSleep.handler
+        events:
+            - httpApi:
+                  path: /sleep
+                  method: GET
+                  authorizer:
+                      name: cognitoAuthorizer
+    deleteSleep:
+        handler: src/functions/sleep/deleteSleep.handler
+        events:
+            - httpApi:
+                  path: /sleep/{date}
+                  method: DELETE
+                  authorizer:
+                      name: cognitoAuthorizer
 
 resources:
     Resources:
