@@ -21,9 +21,18 @@ export async function handler(event: APIGatewayProxyEventV2WithJWTAuthorizer) {
             PK: `USER#${userId}`,
             SK: `GOAL#${goalId}`,
         },
+        ConditionExpression: 'attribute_exists(SK)',
     });
 
-    await dynamoClient.send(command);
-
-    return response(204);
+    try {
+        await dynamoClient.send(command);
+        return response(204);
+    } catch (err: unknown) {
+        if (
+            (err as { name: string }).name === 'ConditionalCheckFailedException'
+        ) {
+            return response(404, { error: 'Goal not found' });
+        }
+        throw err;
+    }
 }
