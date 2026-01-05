@@ -171,6 +171,22 @@ functions:
                   method: GET
                   authorizer:
                       name: cognitoAuthorizer
+    updateMoment:
+        handler: src/functions/moments/updateMoment.handler
+        events:
+            - httpApi:
+                  path: /moments/{momentId}
+                  method: PUT
+                  authorizer:
+                      name: cognitoAuthorizer
+    deleteMoment:
+        handler: src/functions/moments/deleteMoment.handler
+        events:
+            - httpApi:
+                  path: /moments/{momentId}
+                  method: DELETE
+                  authorizer:
+                      name: cognitoAuthorizer
 
 resources:
     Resources:
