@@ -167,7 +167,7 @@ functions:
         handler: src/functions/moments/getMoment.handler
         events:
             - httpApi:
-                  path: /moments/{momentId}
+                  path: /moments
                   method: GET
                   authorizer:
                       name: cognitoAuthorizer
