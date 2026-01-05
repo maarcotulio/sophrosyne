@@ -147,6 +147,14 @@ functions:
                   method: DELETE
                   authorizer:
                       name: cognitoAuthorizer
+    createMoment:
+        handler: src/functions/moments/createMoment.handler
+        events:
+            - httpApi:
+                  path: /moments
+                  method: POST
+                  authorizer:
+                      name: cognitoAuthorizer
 
 resources:
     Resources:
