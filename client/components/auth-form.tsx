@@ -61,10 +61,10 @@ export function AuthForm({
 
       <Tabs defaultValue="signup" className="w-full">
         <TabsList className="w-full h-auto p-1 rounded-xl">
-          <TabsTrigger value="login" className="flex-1 py-2.5 rounded-lg text-sm font-medium">
+          <TabsTrigger value="login" className="flex-1 py-2.5 rounded-lg text-sm font-medium cursor-pointer">
             Log In
           </TabsTrigger>
-          <TabsTrigger value="signup" className="flex-1 py-2.5 rounded-lg text-sm font-medium">
+          <TabsTrigger value="signup" className="flex-1 py-2.5 rounded-lg text-sm font-medium cursor-pointer">
             Sign Up
           </TabsTrigger>
         </TabsList>
@@ -107,17 +107,17 @@ export function AuthForm({
                 </div>
               </Field>
               <Field>
-                <Button type="submit" size="lg" className="w-full h-12 rounded-lg font-bold shadow-lg shadow-primary/20">
+                <Button type="submit" size="lg" className="w-full h-12 rounded-lg font-bold shadow-lg shadow-primary/20 cursor-pointer">
                   Log In
                 </Button>
               </Field>
               <FieldSeparator>Or continue with</FieldSeparator>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" type="button" className="h-11 rounded-lg">
+                <Button variant="outline" type="button" className="h-11 rounded-lg cursor-pointer">
                   <GoogleIcon className="size-5" />
                   Google
                 </Button>
-                <Button variant="outline" type="button" className="h-11 rounded-lg">
+                <Button variant="outline" type="button" className="h-11 rounded-lg cursor-pointer">
                   <AppleIcon className="size-5" />
                   Apple
                 </Button>
@@ -165,22 +165,22 @@ export function AuthForm({
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+                    {showPassword ? <EyeOff className="size-5 cursor-pointer" /> : <Eye className="size-5 cursor-pointer" />}
                   </button>
                 </div>
               </Field>
               <Field>
-                <Button type="submit" size="lg" className="w-full h-12 rounded-lg font-bold shadow-lg shadow-primary/20">
+                <Button type="submit" size="lg" className="w-full h-12 rounded-lg font-bold shadow-lg shadow-primary/20 cursor-pointer">
                   Create Account
                 </Button>
               </Field>
               <FieldSeparator>Or continue with</FieldSeparator>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" type="button" className="h-11 rounded-lg">
+                <Button variant="outline" type="button" className="h-11 rounded-lg cursor-pointer">
                   <GoogleIcon className="size-5" />
                   Google
                 </Button>
-                <Button variant="outline" type="button" className="h-11 rounded-lg">
+                <Button variant="outline" type="button" className="h-11 rounded-lg cursor-pointer">
                   <AppleIcon className="size-5" />
                   Apple
                 </Button>
