@@ -78,7 +78,7 @@ export function AuthForm({
                   id="login-email"
                   type="email"
                   placeholder="name@example.com"
-                  className="h-12 rounded-lg px-4"
+                  className="h-12 rounded-lg px-4 shadow-md shadow-black/50"
                   required
                 />
               </Field>
@@ -94,7 +94,7 @@ export function AuthForm({
                     id="login-password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="h-12 rounded-lg px-4 pr-12"
+                    className="h-12 rounded-lg px-4 pr-12 shadow-md shadow-black/50"
                     required
                   />
                   <button
@@ -141,7 +141,7 @@ export function AuthForm({
                   id="signup-email"
                   type="email"
                   placeholder="name@example.com"
-                  className="h-12 rounded-lg px-4"
+                  className="h-12 rounded-lg px-4 shadow-md shadow-black/50"
                   required
                 />
               </Field>
@@ -157,7 +157,7 @@ export function AuthForm({
                     id="signup-password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a password"
-                    className="h-12 rounded-lg px-4 pr-12"
+                    className="h-12 rounded-lg px-4 pr-12 shadow-md shadow-black/50"
                     required
                   />
                   <button
