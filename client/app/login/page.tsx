@@ -7,7 +7,7 @@ export default function LoginPage() {
       <main className="flex-1 flex w-full relative">
         <div className="flex flex-1 flex-col lg:flex-row h-full">
           {/* Left Side: Auth Form */}
-          <div className="flex flex-1 flex-col justify-center items-center p-6 lg:p-12 xl:p-24 bg-card z-10">
+          <div className="flex flex-1 flex-col justify-center items-center p-6 bg-card z-10">
             <AuthForm />
           </div>
 
