@@ -18,7 +18,7 @@ import {
 
 export default function DashboardPage() {
   return (
-    <div className="flex h-screen w-full overflow-hidden font-[Inter,sans-serif]">
+    <div className="flex h-screen w-full overflow-hidden" style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
       <Sidebar />
 
       <main className="flex-1 overflow-y-auto bg-[#0f172a] p-4 md:p-8">

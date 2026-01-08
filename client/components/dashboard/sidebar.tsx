@@ -7,7 +7,6 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Award,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,7 +34,7 @@ export function Sidebar({ className }: SidebarProps) {
         <div className="flex flex-col gap-8">
           {/* User Profile */}
           <div className="flex items-center gap-3">
-            <div className="size-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
+            <div className="size-12 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
               <Image
                 src="/avatar-placeholder.png"
                 alt="User profile"
