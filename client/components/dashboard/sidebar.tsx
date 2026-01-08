@@ -7,6 +7,7 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Timer,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,6 +18,7 @@ interface SidebarProps {
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", active: true },
+  { icon: Timer, label: "Focus Mode", href: "/pomodoro", active: false },
   { icon: ListChecks, label: "Habits", href: "/habits", active: false },
   { icon: BarChart3, label: "Analytics", href: "/analytics", active: false },
   { icon: Settings, label: "Settings", href: "/settings", active: false },
