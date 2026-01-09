@@ -29,10 +29,10 @@ export function FilterTabs({
             key={category}
             onClick={() => onCategoryChange(category)}
             className={cn(
-              "flex h-9 items-center justify-center px-4 rounded-full text-sm font-medium transition-all",
+              "flex h-9 items-center justify-center px-4 rounded-full text-sm font-medium transition-all duration-200 transform",
               isActive
-                ? "bg-blue-500 text-white font-bold shadow-sm shadow-blue-500/20 hover:scale-105"
-                : "bg-[#1e293b] hover:bg-white/10 text-slate-300 border border-white/10 hover:scale-105"
+                ? "bg-blue-500 text-white font-bold shadow-sm shadow-blue-500/20 scale-100"
+                : "bg-[#1e293b] hover:bg-white/10 text-slate-300 border border-white/10 hover:scale-105 active:scale-95"
             )}
           >
             {category}

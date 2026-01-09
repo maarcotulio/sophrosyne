@@ -1,6 +1,6 @@
 "use client";
 
-import { Image, Smile, Maximize2 } from "lucide-react";
+import { Image as ImageIcon, Smile, Maximize2 } from "lucide-react";
 
 interface LogMomentFormProps {
   className?: string;
@@ -66,7 +66,7 @@ export function LogMomentForm({ className }: LogMomentFormProps) {
                 type="button"
                 className="p-2 text-slate-400 hover:text-blue-500 transition-colors rounded-full hover:bg-white/5"
               >
-                <Image className="size-5" />
+                <ImageIcon className="size-5" />
               </button>
               <button
                 type="button"

@@ -22,7 +22,7 @@ export function MomentCard({ moment, className }: MomentCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex flex-col gap-4 p-6 rounded-2xl bg-[#1e293b] border border-white/10 hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-500/5 cursor-pointer",
+        "group relative flex flex-col gap-4 p-6 rounded-2xl bg-[#1e293b] border border-white/10 hover:border-blue-500/50 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/5 cursor-pointer transform hover:-translate-y-0.5",
         className
       )}
     >

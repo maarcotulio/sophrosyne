@@ -19,7 +19,7 @@ export function JournalStatCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 rounded-xl p-6 border border-white/10 bg-[#1e293b] shadow-sm",
+        "flex flex-col gap-2 rounded-xl p-6 border border-white/10 bg-[#1e293b] shadow-sm transition-all duration-200 hover:border-blue-500/30 hover:shadow-md hover:shadow-blue-500/5",
         className
       )}
     >
