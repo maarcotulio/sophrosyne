@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
+  BookOpen,
   ListChecks,
   BarChart3,
   Settings,
@@ -11,18 +12,54 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   className?: string;
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", active: true },
-  { icon: Timer, label: "Focus Mode", href: "/pomodoro", active: false },
-  { icon: ListChecks, label: "Habits", href: "/habits", active: false },
-  { icon: BarChart3, label: "Analytics", href: "/analytics", active: false },
-  { icon: Settings, label: "Settings", href: "/settings", active: false },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: BookOpen, label: "Journal", href: "/journal" },
+  { icon: Timer, label: "Focus Mode", href: "/pomodoro" },
+  { icon: ListChecks, label: "Habits", href: "/habits" },
+  { icon: BarChart3, label: "Analytics", href: "/analytics" },
+  { icon: Settings, label: "Settings", href: "/settings" },
 ];
+
+function NavItems() {
+  const pathname = usePathname();
+
+  return (
+    <nav className="flex flex-col gap-2">
+      {navItems.map((item) => {
+        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+        return (
+          <Link
+            key={item.label}
+            href={item.href}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-4 py-3 transition-colors",
+              isActive
+                ? "bg-blue-500/20 text-blue-500"
+                : "text-gray-400 hover:bg-white/5 hover:text-white"
+            )}
+          >
+            <item.icon className="size-6" />
+            <span
+              className={cn(
+                "text-sm",
+                isActive ? "font-semibold" : "font-medium"
+              )}
+            >
+              {item.label}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
 
 export function Sidebar({ className }: SidebarProps) {
   return (
@@ -57,30 +94,7 @@ export function Sidebar({ className }: SidebarProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex flex-col gap-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 transition-colors",
-                  item.active
-                    ? "bg-blue-500/20 text-blue-500"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
-                )}
-              >
-                <item.icon className="size-6" />
-                <span
-                  className={cn(
-                    "text-sm",
-                    item.active ? "font-semibold" : "font-medium"
-                  )}
-                >
-                  {item.label}
-                </span>
-              </Link>
-            ))}
-          </nav>
+          <NavItems />
         </div>
 
         {/* Bottom Section */}
