@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   Timer,
+  Moon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,6 +22,7 @@ interface SidebarProps {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: BookOpen, label: "Journal", href: "/journal" },
+  { icon: Moon, label: "Sleep", href: "/sleep" },
   { icon: Timer, label: "Focus Mode", href: "/pomodoro" },
   { icon: ListChecks, label: "Habits", href: "/habits" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
