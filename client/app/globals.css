@@ -129,5 +129,10 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  /* Habit time input styling */
+  .habit-time-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+  }
 }
 
