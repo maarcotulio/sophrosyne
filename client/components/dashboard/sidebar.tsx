@@ -10,6 +10,7 @@ import {
   LogOut,
   Timer,
   Moon,
+  Target,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,6 +26,7 @@ const navItems = [
   { icon: Moon, label: "Sleep", href: "/sleep" },
   { icon: Timer, label: "Focus Mode", href: "/pomodoro" },
   { icon: ListChecks, label: "Habits", href: "/habits" },
+  { icon: Target, label: "Goals", href: "/goals" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
