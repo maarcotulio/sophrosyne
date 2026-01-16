@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   StatCard,
@@ -15,8 +17,15 @@ import {
   ArrowUp,
   ChevronsUp,
 } from "lucide-react";
+import { useState } from "react";
 
 export default function DashboardPage() {
+  const [user, setUser] = useState({
+    name: "Alex",
+    email: "alex@example.com",
+    avatar: "https://i.pravatar.cc/150?u=1",
+  })
+
   return (
     <div className="flex h-screen w-full overflow-hidden" style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
       <Sidebar />
@@ -27,7 +36,7 @@ export default function DashboardPage() {
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div className="flex flex-col gap-1">
               <h2 className="text-3xl font-black tracking-tight text-white md:text-4xl">
-                Welcome back, Alex
+                Welcome back, {user.name}
               </h2>
               <p className="text-slate-400">Let&apos;s crush your goals today.</p>
             </div>
